@@ -17,9 +17,9 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
-from billing.views import transactions_api
+from backend.api import api
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path("api/", transactions_api.urls),
+    path("api/", api.urls),
 ]
