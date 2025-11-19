@@ -67,6 +67,20 @@ INSTALLED_APPS = [
     "billing",
 ]
 
+JWT_SECRET = SECRET_KEY
+JWT_ALGORITHM = "HS256"
+JWT_ACCESS_TOKEN_EXPIRE_MINUTES = 15
+JWT_REFRESH_TOKEN_EXPIRE_DAYS = 14
+JWT_ALLOW_REFRESH = True
+
+# optional: store token rotation / reuse rules
+JWT_ROTATE_REFRESH_TOKENS = True
+JWT_BLACKLIST_ENABLED = True
+
+# email for verify/reset dev:
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+DEFAULT_FROM_EMAIL = "no-reply@example.com"
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
