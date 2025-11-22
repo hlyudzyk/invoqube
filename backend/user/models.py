@@ -1,29 +1,55 @@
-from django.db import models
-
-from django.db import models
-from django.conf import settings
 import uuid
-from django.utils import timezone
+from django.conf import settings
+from django.contrib.auth.models import AbstractBaseUser,PermissionsMixin,UserManager
+from django.db import models
 
-User = settings.AUTH_USER_MODEL  # string like "auth.User" or custom
+class CustomUserManager(UserManager):
+  def _create_user(self,name,email,password, **extra_fields):
+    if not email:
+      raise ValueError("You have not specified a valid email address")
 
-class RefreshToken(models.Model):
-    """
-    Stores issued refresh tokens (one row per issued refresh token).
-    We store jti (token unique id) and link to user; this allows revocation and rotation.
-    """
-    jti = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="refresh_tokens")
-    created_at = models.DateTimeField(auto_now_add=True)
-    expires_at = models.DateTimeField()
-    revoked = models.BooleanField(default=False)
-    replaced_by = models.UUIDField(null=True, blank=True)
+    if not name:
+      name=email
 
-    class Meta:
-        indexes = [
-            models.Index(fields=["user"]),
-            models.Index(fields=["revoked"]),
-        ]
+    email = self.normalize_email(email)
+    user = self.model(email=email,name=name,**extra_fields)
+    user.set_password(password)
+    user.save(using=self.db)
 
-    def is_expired(self):
-        return timezone.now() >= self.expires_at
+    return user
+
+  def create_user(self, name=None, email=None, password=None, **extra_fields):
+    extra_fields.setdefault('is_staff',False)
+    extra_fields.setdefault('is_superuser',False)
+    return self._create_user(name,email,password,**extra_fields)
+
+  def create_superuser(self, name, email=None, password=None, **extra_fields):
+    extra_fields.setdefault('is_staff',True)
+    extra_fields.setdefault('is_superuser',True)
+    return self._create_user(name,email,password,**extra_fields)
+
+
+class User(AbstractBaseUser,PermissionsMixin):
+  id = models.UUIDField(primary_key=True,default=uuid.uuid4,editable=False)
+  email = models.EmailField(unique=True)
+  name = models.CharField(max_length=255,blank=True,null=True)
+  description = models.CharField(max_length=255,blank=True,null=True)
+  avatar = models.ImageField(upload_to='uploads/avatars',null=True,blank=True)
+
+  is_active = models.BooleanField(default=True)
+  is_superuser = models.BooleanField(default=False)
+  is_staff = models.BooleanField(default=False)
+
+  date_joined = models.DateTimeField(auto_now_add=True)
+  last_login = models.DateTimeField(blank=True,null=True)
+
+  objects = CustomUserManager()
+  USERNAME_FIELD = 'email'
+  EMAIL_FIELD = 'email'
+  REQUIRED_FIELDS = ['name']
+
+  def avatar_url(self):
+    if self.avatar:
+      return f'{settings.WEBSITE_URL}{self.avatar.url}'
+    else:
+      return ''
