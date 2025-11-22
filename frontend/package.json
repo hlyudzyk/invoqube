@@ -11,12 +11,19 @@
   "dependencies": {
     "next": "16.0.3",
     "react": "19.2.0",
-    "react-dom": "19.2.0"
+    "react-date-fns": "^1.2.1",
+    "react-date-range": "^2.0.1",
+    "react-dom": "19.2.0",
+    "react-icons": "^5.5.0",
+    "react-select": "^5.10.2",
+    "world-countries": "^5.1.0",
+    "zustand": "^5.0.8"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
+    "@types/react-date-range": "^1.4.10",
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.0.3",
