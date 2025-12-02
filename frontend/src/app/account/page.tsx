@@ -6,7 +6,6 @@ import {getUserId} from "@/app/lib/actions";
 import apiService from "@/app/services/apiServices";
 import {UserType} from "@/app/lib/types";
 import {AccountPageSkeleton } from "@/app/components/skeletons";
-import useLoginModal from "@/app/hooks/useLoginModal";
 import {useRouter} from "next/navigation";
 
 
@@ -18,15 +17,14 @@ const AccountPage = () => {
   const [avatarUrl, setAvatarUrl] = useState<string>('/no_pfp.png');
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
 
-  const loginModal = useLoginModal();
   const router = useRouter();
 
   useEffect(() => {
     const fetchUser = async () => {
       const userid = await getUserId();
       if (!userid) {
-        loginModal.open();
-        router.push('/');
+        router.push('/login');
+        return;
       }
       const userData: UserType = await apiService.get(`/api/auth/${userid}/`);
       setUser(userData);
@@ -35,7 +33,7 @@ const AccountPage = () => {
       setDescription(userData.description);
     };
     fetchUser();
-  }, []);
+  }, [router]);
 
   const setImage = (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {

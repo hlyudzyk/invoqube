@@ -1,75 +1,110 @@
-import {getAccessToken} from "@/app/lib/actions";
+import axios, { AxiosInstance } from 'axios';
+import { getAccessToken } from '@/app/lib/actions';
 
+// Create axios instance with base configuration
+const axiosInstance: AxiosInstance = axios.create({
+  baseURL: process.env.NEXT_PUBLIC_API_HOST,
+  headers: {
+    'Accept': 'application/json',
+    'Content-Type': 'application/json',
+  },
+  timeout: 10000, // 10 second timeout
+});
+
+// Request interceptor to add token to requests
+axiosInstance.interceptors.request.use(
+  async (config) => {
+    const token = await getAccessToken();
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
+// Response interceptor to handle errors
+axiosInstance.interceptors.response.use(
+  (response) => {
+    return response;
+  },
+  (error) => {
+    if (error.response) {
+      // Server responded with error status
+      console.error('API Error:', error.response.data);
+    } else if (error.request) {
+      // Request made but no response
+      console.error('Network Error:', error.request);
+    } else {
+      // Something else happened
+      console.error('Error:', error.message);
+    }
+    return Promise.reject(error);
+  }
+);
 
 const apiService = {
-  get: async function (url:string): Promise<any>{
-    console.log('get',url);
+  get: async function (url: string): Promise<any> {
+    console.log('get', url);
+    try {
+      const response = await axiosInstance.get(url);
+      console.log('Response', response.data);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
 
-    const token = await getAccessToken();
+  post: async function (url: string, data: any): Promise<any> {
+    console.log('post', url, data);
+    try {
+      const response = await axiosInstance.post(url, data);
+      console.log('Response', response.data);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
 
-    return new Promise((resolve,reject)=>{
-      fetch(`${process.env.NEXT_PUBLIC_API_HOST}${url}`,{
-        method: 'GET',
-        headers:{
+  postWithoutToken: async function (url: string, data: any): Promise<any> {
+    console.log('post without token', url, data);
+    try {
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_HOST}${url}`, data, {
+        headers: {
           'Accept': 'application/json',
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        }
-      })
-        .then(response=>response.json())
-        .then((json)=>{
-          console.log('Response',json);
-          resolve(json)
-        })
-        .catch((error)=>{
-          reject(error)
-        })
-    })
+        },
+      });
+      console.log('Response', response.data);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
   },
-  post: async function(url:string, data:any):Promise<any> {
-    console.log('post', url, data);
 
-    const token = await getAccessToken();
-
-    return new Promise((resolve,reject)=>{
-      fetch(`${process.env.NEXT_PUBLIC_API_HOST}${url}`,{
-        method: 'POST',
-        body:data,
-        headers:{
-          'Authorization': `Bearer ${token}`
-        }
-      })
-      .then(response=>response.json())
-      .then((json)=>{
-        console.log('Response',json);
-        resolve(json)
-      })
-      .catch((error)=>{
-        reject(error)
-      })
-    })
+  put: async function (url: string, data: any): Promise<any> {
+    console.log('put', url, data);
+    try {
+      const response = await axiosInstance.put(url, data);
+      console.log('Response', response.data);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
   },
-  postWithoutToken: async function(url:string, data:any):Promise<any> {
-    console.log('post', url, data);
 
-    return new Promise((resolve,reject)=>{
-      fetch(`${process.env.NEXT_PUBLIC_API_HOST}${url}`,{
-        method: 'POST',
-        body:data,
-        headers:{
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-        }
-      })
-      .then(response=>response.json())
-      .then((json)=>{
-        console.log('Response',json);
-        resolve(json)
-      })
-      .catch((error)=>{
-        reject(error)
-      })
-    })
-  }}
+  delete: async function (url: string): Promise<any> {
+    console.log('delete', url);
+    try {
+      const response = await axiosInstance.delete(url);
+      console.log('Response', response.data);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
+};
 
 export default apiService;
