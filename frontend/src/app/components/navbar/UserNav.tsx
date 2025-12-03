@@ -14,8 +14,8 @@ const UserNav:React.FC<UserNavProps> = ({userId}) =>{
   const [isOpen,setIsOpen] = useState(false);
   const router = useRouter();
   return(
-      <div className="p-2 relative inline-block border rounded-full">
-        <button className="flex items-center" onClick={()=>setIsOpen(!isOpen)}>
+      <div className="p-2 relative inline-block border border-accent rounded-full">
+        <button className="flex items-center text-accent" onClick={()=>setIsOpen(!isOpen)}>
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5"
                stroke="currentColor" className="size-6">
             <path strokeLinecap="round" strokeLinejoin="round"
