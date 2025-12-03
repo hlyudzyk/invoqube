@@ -5,6 +5,7 @@ import LoginModal from "@/app/components/modals/LoginModal";
 import SignupModal from "@/app/components/modals/SignupModal";
 import ConditionalNavbar from "@/app/components/ConditionalNavbar";
 import ConditionalLayout from "@/app/components/ConditionalLayout";
+import ScrollToTop from "@/app/components/ScrollToTop";
 import { Inter } from "next/font/google";
 import Footer from "@/app/components/footer/Footer";
 
@@ -33,6 +34,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
+        <ScrollToTop />
         <ConditionalNavbar />
         <ConditionalLayout>
           {children}
