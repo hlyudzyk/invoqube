@@ -2,18 +2,15 @@
 
 import React, {useState} from "react";
 import MenuLink from "@/app/components/navbar/MenuLink";
-import useLoginModal from "@/app/hooks/useLoginModal";
-import useSignupModal from "@/app/hooks/useSignupModal";
 import LogoutButton from "@/app/components/LogoutButton";
 import {useRouter} from "next/navigation";
+import Link from "next/link";
 
 interface UserNavProps {
     userId?:string|null;
 }
 
 const UserNav:React.FC<UserNavProps> = ({userId}) =>{
-  const loginModal = useLoginModal();
-  const signupModal = useSignupModal();
   const [isOpen,setIsOpen] = useState(false);
   const router = useRouter();
   return(
@@ -70,14 +67,14 @@ const UserNav:React.FC<UserNavProps> = ({userId}) =>{
                   <MenuLink label="Log in" onClick={
                     ()=> {
                       setIsOpen(false);
-                      loginModal.open();
+                      router.push('/login');
                     }}
                   />
 
                   <MenuLink label="Sign up" onClick={
                     ()=> {
                       setIsOpen(false);
-                      signupModal.open();
+                      router.push('/register');
                     }}/>
                   <MenuLink label="About" onClick={()=> {
                       setIsOpen(false);
