@@ -35,6 +35,16 @@ class User(AbstractBaseUser,PermissionsMixin):
   name = models.CharField(max_length=255,blank=True,null=True)
   description = models.CharField(max_length=255,blank=True,null=True)
   avatar = models.ImageField(upload_to='uploads/avatars',null=True,blank=True)
+  
+  # Business details
+  business_name = models.CharField(max_length=255,blank=True,null=True)
+  vat_number = models.CharField(max_length=50,blank=True,null=True)
+  registration_number = models.CharField(max_length=50,blank=True,null=True)
+  address = models.TextField(blank=True,null=True)
+  city = models.CharField(max_length=100,blank=True,null=True)
+  postal_code = models.CharField(max_length=20,blank=True,null=True)
+  country = models.CharField(max_length=100,blank=True,null=True)
+  phone = models.CharField(max_length=50,blank=True,null=True)
 
   is_active = models.BooleanField(default=True)
   is_superuser = models.BooleanField(default=False)
