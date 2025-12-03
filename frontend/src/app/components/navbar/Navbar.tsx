@@ -28,7 +28,7 @@ const Navbar = () => {
                         width={30}
                         height={30}
                     />
-                        <h2 className="text-xl ml-3 text-blue-400 font-semibold">Invoices</h2>
+                        <h2 className="text-xl ml-3 text-accent font-semibold">Invoices</h2>
                     </div>
 
                 </Link>
