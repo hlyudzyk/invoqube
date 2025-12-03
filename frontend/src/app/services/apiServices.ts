@@ -1,5 +1,12 @@
 import axios, { AxiosInstance } from 'axios';
-import { getAccessToken } from '@/app/lib/actions';
+
+// Helper function to get token from localStorage
+const getAccessToken = () => {
+  if (typeof window !== 'undefined') {
+    return localStorage.getItem('access_token');
+  }
+  return null;
+};
 
 // Create axios instance with base configuration
 const axiosInstance: AxiosInstance = axios.create({
@@ -14,10 +21,16 @@ const axiosInstance: AxiosInstance = axios.create({
 // Request interceptor to add token to requests
 axiosInstance.interceptors.request.use(
   async (config) => {
-    const token = await getAccessToken();
+    const token = getAccessToken();
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
+    
+    // If sending FormData, remove Content-Type to let browser set it with boundary
+    if (config.data instanceof FormData) {
+      delete config.headers['Content-Type'];
+    }
+    
     return config;
   },
   (error) => {
