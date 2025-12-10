@@ -14,7 +14,7 @@ const AddInvoiceButton:React.FC<AddInvoiceProps> = ({userid}) =>{
   }
 
    return (
-       <div className="p-2 cursor-pointer text-sm font-semibold rounded-full hover:bg-gray-200"
+       <div className="p-2 cursor-pointer text-sm font-semibold rounded-full text-brand bg-accent hover:bg-accent-dark transition-colors"
           onClick={lightbaseYourHome}>
           Add invoice
        </div>
