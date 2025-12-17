@@ -27,7 +27,7 @@ class Invoice(models.Model):
     company = models.ForeignKey(Company, on_delete=models.PROTECT, related_name="invoices")
     invoice_number = models.CharField(max_length=50, unique=True)
     issue_date = models.DateField(default=timezone.now)
-    due_date = models.DateField()
+    due_date = models.DateField(default=timezone.now() + timezone.timedelta(days=7))
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="draft")
 
     def __str__(self):
