@@ -79,7 +79,9 @@ REST_FRAMEWORK = {
 }
 REST_AUTH = {
     "USE_JWT": True,
-    "JWT_AUTH_HTTPONLY": False
+    "JWT_AUTH_HTTPONLY": False,
+    "REGISTER_SERIALIZER": "user.serializers.CustomRegisterSerializer",
+    "LOGIN_SERIALIZER": "user.serializers.CustomLoginSerializer",
 }
 # Application definition
 
