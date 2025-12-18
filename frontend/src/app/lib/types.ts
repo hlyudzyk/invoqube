@@ -1,17 +1,17 @@
 export type UserType = {
-  id:string;
-  name:string;
-  email:string;
-  avatar_url:string;
-  description:string;
-  business_name?:string;
-  vat_number?:string;
-  registration_number?:string;
-  address?:string;
-  city?:string;
-  postal_code?:string;
-  country?:string;
-  phone?:string;
+  id: string;
+  name: string;
+  email?: string;
+  avatar_url: string;
+  description: string;
+  company_name?: string;
+  vat_number?: string;
+  registration_number?: string;
+  address?: string;
+  city?: string;
+  postal_code?: string;
+  country?: string;
+  phone?: string;
 }
 
 export type InvoiceStatus = 'draft' | 'sent' | 'paid' | 'overdue';

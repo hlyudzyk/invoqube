@@ -76,13 +76,6 @@ export default function NewInvoicePage() {
   const [clientAddress, setClientAddress] = useState('');
   const [issueDate, setIssueDate] = useState(new Date().toISOString().split('T')[0]);
   
-  // Refs for form fields
-  const clientNameRef = useRef<HTMLInputElement>(null);
-  const clientEmailRef = useRef<HTMLInputElement>(null);
-  const issueDateRef = useRef<HTMLInputElement>(null);
-  const dueDateRef = useRef<HTMLInputElement>(null);
-  
-  // Calculate initial due date (7 days from today)
   const calculateDueDate = (date: string) => {
     const issueDateTime = new Date(date);
     issueDateTime.setDate(issueDateTime.getDate() + 7);
