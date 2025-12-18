@@ -69,9 +69,13 @@ export default function InvoiceDetailPage() {
             Mark as Paid
           </button>
         )}
-        <button className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-semibold">
-          Edit
-        </button>
+        {invoice.status === 'draft' && (
+          <Link href={`/invoices/${invoice.id}/edit`}>
+            <button className="px-6 py-3 bg-accent hover:bg-accent-dark text-brand rounded-lg transition-colors font-semibold">
+              Edit Invoice
+            </button>
+          </Link>
+        )}
       </div>
 
       {/* Invoice Content */}
