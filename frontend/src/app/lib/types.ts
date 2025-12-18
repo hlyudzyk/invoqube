@@ -35,7 +35,6 @@ export type Invoice = {
   issueDate: string;
   dueDate: string;
   items: LineItem[];
-  notes?: string;
   tax: number;
   subtotal: number;
 }
