@@ -26,7 +26,6 @@ def invoice_update(request, invoice_id):
     """Update invoice - only allowed for draft status"""
     invoice = get_object_or_404(Invoice, id=invoice_id)
     
-    # Check if invoice can be edited
     if not invoice.can_edit():
         return JsonResponse({
             'error': 'Only draft invoices can be edited'
@@ -40,10 +39,8 @@ def invoice_update(request, invoice_id):
         'status': invoice.status,
     }
     
-    # Track changes
     changes = {}
     
-    # Update invoice fields
     if 'invoice_number' in request.data and request.data['invoice_number'] != invoice.invoice_number:
         changes['invoice_number'] = {
             'old': invoice.invoice_number,
@@ -67,12 +64,10 @@ def invoice_update(request, invoice_id):
     
     invoice.save()
     
-    # Update invoice items if provided
     if 'items' in request.data:
         # Store old items for audit
         old_items = list(invoice.items.values('id', 'description', 'quantity', 'unit_price'))
         
-        # Clear existing items and create new ones
         invoice.items.all().delete()
         
         for item_data in request.data['items']:
