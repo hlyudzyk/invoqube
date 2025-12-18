@@ -10,7 +10,11 @@ const AddInvoiceButton:React.FC<AddInvoiceProps> = ({userid}) =>{
   const loginModal = useLoginModal();
 
   const onAddInvoiceClick = () => {
-      console.log("sdsaaa")
+    if (!userid) {
+      loginModal.onOpen();
+      return;
+    }
+    // TODO: Implement invoice creation flow for authenticated users.
   }
 
    return (
