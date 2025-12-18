@@ -342,7 +342,7 @@ const AccountPage = () => {
           <h1 className="my-6 text-2xl">My invoices</h1>
 
           <div className="mt-4 grid md:grid-cols-3 lg:grid-cols-5 gap-6">
-              Hello hello 2
+            {/* TODO: Render invoice list or empty state here. */}
           </div>
         </div>
       </main>
