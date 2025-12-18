@@ -1,10 +1,8 @@
 from django.db import models
 
 # Create your models here.
-from django.db import models
 from django.utils import timezone
 from django.conf import settings
-import json
 
 
 class Company(models.Model):
@@ -29,7 +27,7 @@ class Invoice(models.Model):
     company = models.ForeignKey(Company, on_delete=models.PROTECT, related_name="invoices")
     invoice_number = models.CharField(max_length=50, unique=True)
     issue_date = models.DateField(default=timezone.now)
-    due_date = models.DateField(default=timezone.now() + timezone.timedelta(days=7))
+    due_date = models.DateField(default=lambda: timezone.now() + timezone.timedelta(days=7))
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="draft")
     
     # Additional fields with null=True for backwards compatibility
@@ -89,9 +87,6 @@ class InvoiceAuditLog(models.Model):
     
     def __str__(self):
         return f"{self.action} on {self.invoice.invoice_number} by {self.user} at {self.timestamp}"
-
-    def __str__(self):
-        return self.description
 
 
 class Payment(models.Model):

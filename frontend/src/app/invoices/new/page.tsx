@@ -10,7 +10,6 @@ export default function NewInvoicePage() {
   const [clientAddress, setClientAddress] = useState('');
   const [issueDate, setIssueDate] = useState(new Date().toISOString().split('T')[0]);
   
-  // Calculate initial due date (7 days from today)
   const calculateDueDate = (date: string) => {
     const issueDateTime = new Date(date);
     issueDateTime.setDate(issueDateTime.getDate() + 7);

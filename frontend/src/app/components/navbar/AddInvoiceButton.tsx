@@ -9,13 +9,17 @@ interface AddInvoiceProps{
 const AddInvoiceButton:React.FC<AddInvoiceProps> = ({userid}) =>{
   const loginModal = useLoginModal();
 
-  const lightbaseYourHome = () => {
-      console.log("sdsaaa")
+  const onAddInvoiceClick = () => {
+    if (!userid) {
+      loginModal.onOpen();
+      return;
+    }
+    // TODO: Implement invoice creation flow for authenticated users.
   }
 
    return (
-       <div className="p-2 cursor-pointer text-sm font-semibold rounded-full text-brand bg-accent hover:bg-accent-dark transition-colors"
-          onClick={lightbaseYourHome}>
+       <div className="p-2 cursor-pointer text-sm font-semibold rounded-full hover:bg-gray-200"
+          onClick={onAddInvoiceClick}>
           Add invoice
        </div>
    )

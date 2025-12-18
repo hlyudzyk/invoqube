@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import apiService from '@/app/services/apiServices';
+import { handleLogin } from '@/app/lib/actions';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -25,9 +26,12 @@ export default function LoginPage() {
       });
 
       if (response.access) {
-        // Store token and user info
-        localStorage.setItem('access_token', response.access);
-        localStorage.setItem('user_id', response.user.pk);
+        // Store tokens using server-side cookies
+        await handleLogin(
+          response.user.pk,
+          response.access,
+          response.refresh
+        );
         
         // Redirect to dashboard
         router.push('/dashboard');
