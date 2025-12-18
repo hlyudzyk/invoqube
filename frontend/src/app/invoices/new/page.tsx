@@ -9,7 +9,15 @@ export default function NewInvoicePage() {
   const [clientEmail, setClientEmail] = useState('');
   const [clientAddress, setClientAddress] = useState('');
   const [issueDate, setIssueDate] = useState(new Date().toISOString().split('T')[0]);
-  const [dueDate, setDueDate] = useState('');
+  
+  // Calculate initial due date (7 days from today)
+  const calculateDueDate = (date: string) => {
+    const issueDateTime = new Date(date);
+    issueDateTime.setDate(issueDateTime.getDate() + 7);
+    return issueDateTime.toISOString().split('T')[0];
+  };
+  
+  const [dueDate, setDueDate] = useState(calculateDueDate(new Date().toISOString().split('T')[0]));
   const [notes, setNotes] = useState('');
   const [items, setItems] = useState<LineItem[]>([
     { id: '1', description: '', quantity: 1, price: 0, total: 0 }
@@ -126,7 +134,10 @@ export default function NewInvoicePage() {
                 type="date"
                 required
                 value={issueDate}
-                onChange={(e) => setIssueDate(e.target.value)}
+                onChange={(e) => {
+                  setIssueDate(e.target.value);
+                  setDueDate(calculateDueDate(e.target.value));
+                }}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>
@@ -141,7 +152,9 @@ export default function NewInvoicePage() {
                 value={dueDate}
                 onChange={(e) => setDueDate(e.target.value)}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                min={issueDate}
               />
+              <p className="text-xs text-gray-500 mt-1">Automatically set to 7 days after issue date</p>
             </div>
           </div>
         </div>
