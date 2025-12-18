@@ -19,8 +19,11 @@ class InvoiceItemSerializer(serializers.ModelSerializer):
 class InvoiceSerializer(serializers.ModelSerializer):
     items = InvoiceItemSerializer(many=True, read_only=True)
     total_amount = serializers.DecimalField(max_digits=10, decimal_places=2, read_only=True)
-    can_edit = serializers.BooleanField(read_only=True)
+    can_edit = serializers.SerializerMethodField()
     company_name = serializers.CharField(source='company.name', read_only=True)
+
+    def get_can_edit(self, obj):
+        return obj.can_edit()
     
     class Meta:
         model = Invoice

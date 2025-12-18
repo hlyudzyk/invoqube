@@ -23,9 +23,24 @@ const AccountPage = () => {
     country: '',
     phone: '',
   });
+  const [user, setUser] = useState<UserType>();
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    description: '',
+    company_name: '',
+    vat_number: '',
+    registration_number: '',
+    address: '',
+    city: '',
+    postal_code: '',
+    country: '',
+    phone: '',
+  });
   const [avatar, setAvatar] = useState<File | null>(null);
   const [avatarUrl, setAvatarUrl] = useState<string>('/no_pfp.png');
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+  const [isEditing, setIsEditing] = useState(false);
 
   const router = useRouter();
 
@@ -36,27 +51,22 @@ const AccountPage = () => {
         router.push('/login');
         return;
       }
-      try {
-        const userData: UserType = await apiService.get(`/api/auth/${userid}/`);
-        setUser(userData);
-        setFormData({
-          name: userData.name || '',
-          email: userData.email || '',
-          description: userData.description || '',
-          business_name: userData.business_name || '',
-          vat_number: userData.vat_number || '',
-          registration_number: userData.registration_number || '',
-          address: userData.address || '',
-          city: userData.city || '',
-          postal_code: userData.postal_code || '',
-          country: userData.country || '',
-          phone: userData.phone || '',
-        });
-        setAvatarUrl(userData.avatar_url || '/no_pfp.png');
-      } catch (error) {
-        console.error('Error fetching user:', error);
-        router.push('/login');
-      }
+      const userData: UserType = await apiService.get(`/api/auth/${userid}/`);
+      setUser(userData);
+      setFormData({
+        name: userData.name || '',
+        email: userData.email || '',
+        description: userData.description || '',
+        company_name: userData.company_name || '',
+        vat_number: userData.vat_number || '',
+        registration_number: userData.registration_number || '',
+        address: userData.address || '',
+        city: userData.city || '',
+        postal_code: userData.postal_code || '',
+        country: userData.country || '',
+        phone: userData.phone || '',
+      });
+      setAvatarUrl(userData.avatar_url ? userData.avatar_url : '/no_pfp.png');
     };
     fetchUser();
   }, [router]);
@@ -79,29 +89,52 @@ const AccountPage = () => {
   const handleSave = async () => {
     setStatus('loading');
     const data = new FormData();
-    Object.entries(formData).forEach(([key, value]) => {
-      if (value) data.append(key, value);
-    });
+    data.append('name', formData.name);
+    data.append('email', formData.email);
+    data.append('description', formData.description);
+    data.append('company_name', formData.company_name);
+    data.append('vat_number', formData.vat_number);
+    data.append('registration_number', formData.registration_number);
+    data.append('address', formData.address);
+    data.append('city', formData.city);
+    data.append('postal_code', formData.postal_code);
+    data.append('country', formData.country);
+    data.append('phone', formData.phone);
     if (avatar) data.append('avatar', avatar);
 
     try {
       await apiService.post(`/api/auth/edit/`, data);
       setStatus('success');
       setIsEditing(false);
-      // Refresh user data
-      const userid = localStorage.getItem('user_id');
-      if (userid) {
-        const userData: UserType = await apiService.get(`/api/auth/${userid}/`);
-        setUser(userData);
-      }
     } catch (error) {
       console.error('Error saving:', error);
       setStatus('error');
     }
   };
 
-  if (!user) {
-    return (
+  const handleCancel = () => {
+    setStatus('idle');
+    setIsEditing(false);
+    // Reset form data to current user values
+    setFormData({
+      name: user?.name || '',
+      email: user?.email || '',
+      description: user?.description || '',
+      company_name: user?.company_name || '',
+      vat_number: user?.vat_number || '',
+      registration_number: user?.registration_number || '',
+      address: user?.address || '',
+      city: user?.city || '',
+      postal_code: user?.postal_code || '',
+      country: user?.country || '',
+      phone: user?.phone || '',
+    });
+    // Reset avatar to original
+    setAvatarUrl(user?.avatar_url ? user.avatar_url : '/no_pfp.png');
+    setAvatar(null);
+  };
+
+  return user ? (
       <main className="max-w-[1500px] mx-auto px-6 pb-6">
         <div className="animate-pulse">
           <div className="h-8 bg-gray-200 rounded w-1/4 mb-6"></div>
@@ -216,11 +249,10 @@ const AccountPage = () => {
                 <label className="block text-sm font-medium text-brand mb-2">Phone</label>
                 {isEditing ? (
                   <input
-                    type="text"
-                    name="phone"
-                    value={formData.phone}
-                    onChange={handleChange}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent"
+                      type="text"
+                      value={formData.name}
+                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                      className="w-full p-4 border border-gray-600 rounded-xl"
                   />
                 ) : (
                   <p className="text-gray-700">{user.phone || 'Not provided'}</p>
@@ -231,15 +263,11 @@ const AccountPage = () => {
                 <label className="block text-sm font-medium text-brand mb-2">Description</label>
                 {isEditing ? (
                   <textarea
-                    name="description"
-                    value={formData.description}
-                    onChange={handleChange}
-                    rows={3}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent"
-                  />
-                ) : (
-                  <p className="text-gray-700">{user.description || 'Not provided'}</p>
-                )}
+                      value={formData.description}
+                      onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                      className="w-full p-4 h-[200px] border border-gray-600 rounded-xl"
+                  ></textarea>
+                </div>
               </div>
             </div>
           </div>
@@ -278,85 +306,48 @@ const AccountPage = () => {
                 )}
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-brand mb-2">Registration Number</label>
-                {isEditing ? (
-                  <input
-                    type="text"
-                    name="registration_number"
-                    value={formData.registration_number}
-                    onChange={handleChange}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent"
-                  />
-                ) : (
-                  <p className="text-gray-700">{user.registration_number || 'Not provided'}</p>
-                )}
-              </div>
-
-              <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-brand mb-2">Address</label>
-                {isEditing ? (
-                  <input
-                    type="text"
-                    name="address"
-                    value={formData.address}
-                    onChange={handleChange}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent"
-                  />
-                ) : (
-                  <p className="text-gray-700">{user.address || 'Not provided'}</p>
-                )}
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-brand mb-2">City</label>
-                {isEditing ? (
-                  <input
-                    type="text"
-                    name="city"
-                    value={formData.city}
-                    onChange={handleChange}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent"
-                  />
-                ) : (
-                  <p className="text-gray-700">{user.city || 'Not provided'}</p>
-                )}
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-brand mb-2">Postal Code</label>
-                {isEditing ? (
-                  <input
-                    type="text"
-                    name="postal_code"
-                    value={formData.postal_code}
-                    onChange={handleChange}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent"
-                  />
-                ) : (
-                  <p className="text-gray-700">{user.postal_code || 'Not provided'}</p>
-                )}
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-brand mb-2">Country</label>
-                {isEditing ? (
-                  <input
-                    type="text"
-                    name="country"
-                    value={formData.country}
-                    onChange={handleChange}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent"
-                  />
-                ) : (
-                  <p className="text-gray-700">{user.country || 'Not provided'}</p>
-                )}
-              </div>
+            <div className="flex gap-4">
+              <button
+                  onClick={handleSave}
+                  disabled={status === 'loading'}
+                  className="cursor-pointer bg-lightbase hover:bg-lightbase-hover p-5 text-white rounded-xl mt-4 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {status === 'loading' ? 'Saving...' : 'Save Changes'}
+              </button>
+              
+              <button
+                  onClick={handleCancel}
+                  disabled={status === 'loading'}
+                  className="cursor-pointer bg-gray-500 hover:bg-gray-600 p-5 text-white rounded-xl mt-4 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Cancel
+              </button>
             </div>
+
+            {status === 'success' && (
+                <div className="mt-4 bg-green-500 rounded-xl text-white p-5">
+                  Changes saved successfully!
+                </div>
+            )}
+
+            {status === 'error' && (
+                <div className="mt-4 text-red-600">
+                  There was an error saving changes. Please try again.
+                </div>
+            )}
           </div>
         </div>
-      </div>
-    </main>
+
+        <div className="p-6 rounded-xl border-gray-300 shadow-xl mt-20">
+          <h1 className="my-6 text-2xl">My invoices</h1>
+
+          <div className="mt-4 grid md:grid-cols-3 lg:grid-cols-5 gap-6">
+              Hello hello 2
+          </div>
+        </div>
+      </main>
+  ) : (
+      <AccountPageSkeleton />
   );
 };
 
