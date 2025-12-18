@@ -1,8 +1,74 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import Link from 'next/link';
 import { LineItem } from '@/app/lib/types';
+
+// Custom dropdown component for item descriptions
+const DescriptionInput = ({ 
+  value, 
+  onChange, 
+  dataItemId,
+  commonDescriptions 
+}: { 
+  value: string; 
+  onChange: (value: string) => void; 
+  dataItemId: string;
+  commonDescriptions: string[];
+}) => {
+  const [showDropdown, setShowDropdown] = useState(false);
+  const [filteredOptions, setFilteredOptions] = useState(commonDescriptions);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const inputValue = e.target.value;
+    onChange(inputValue);
+    
+    // Filter options based on input
+    const filtered = commonDescriptions.filter(desc =>
+      desc.toLowerCase().includes(inputValue.toLowerCase())
+    );
+    setFilteredOptions(filtered);
+    setShowDropdown(true);
+  };
+
+  const handleSelectOption = (option: string) => {
+    onChange(option);
+    setShowDropdown(false);
+  };
+
+  return (
+    <div className="relative">
+      <input
+        ref={inputRef}
+        type="text"
+        value={value}
+        onChange={handleInputChange}
+        onFocus={() => {
+          setFilteredOptions(commonDescriptions);
+          setShowDropdown(true);
+        }}
+        onBlur={() => setTimeout(() => setShowDropdown(false), 200)}
+        data-item-id={dataItemId}
+        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+        placeholder="Select or type item description"
+      />
+      {showDropdown && filteredOptions.length > 0 && (
+        <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-48 overflow-y-auto">
+          {filteredOptions.map((option, idx) => (
+            <div
+              key={idx}
+              onClick={() => handleSelectOption(option)}
+              className="px-4 py-2 hover:bg-blue-50 cursor-pointer text-gray-900 transition-colors"
+            >
+              {option}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
 
 export default function NewInvoicePage() {
   const [clientName, setClientName] = useState('');
@@ -21,6 +87,15 @@ export default function NewInvoicePage() {
   const [items, setItems] = useState<LineItem[]>([
     { id: '1', description: '', quantity: 1, price: 0, total: 0 }
   ]);
+
+  // Predefined item descriptions
+  const commonDescriptions = [
+    'Web Development Services',
+    'Graphic Design',
+    'Consulting Services',
+    'Software License',
+    'Monthly Subscription'
+  ];
 
   const addItem = () => {
     const newItem: LineItem = {
@@ -57,6 +132,37 @@ export default function NewInvoicePage() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Validate required fields and focus on first missing field
+    if (!clientName.trim()) {
+      clientNameRef.current?.focus();
+      return;
+    }
+    
+    if (!clientEmail.trim()) {
+      clientEmailRef.current?.focus();
+      return;
+    }
+    
+    if (!issueDate) {
+      issueDateRef.current?.focus();
+      return;
+    }
+    
+    if (!dueDate) {
+      dueDateRef.current?.focus();
+      return;
+    }
+    
+    // Validate items have descriptions
+    const firstEmptyItem = items.find(item => !item.description.trim());
+    if (firstEmptyItem) {
+      // Focus on the first item with empty description
+      const itemElement = document.querySelector(`input[data-item-id="${firstEmptyItem.id}"]`) as HTMLInputElement;
+      itemElement?.focus();
+      return;
+    }
+    
     // This is a prototype - in real app, this would call an API
     alert('Invoice created successfully! (This is a prototype)');
   };
@@ -73,7 +179,7 @@ export default function NewInvoicePage() {
         <p className="text-gray-600">Fill in the details below to generate a new invoice</p>
       </div>
 
-      <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-lg p-8">
+      <form onSubmit={handleSubmit} noValidate className="bg-white rounded-lg shadow-lg p-8">
         {/* Client Information */}
         <div className="mb-8">
           <h2 className="text-2xl font-semibold text-gray-900 mb-4">Client Information</h2>
@@ -83,6 +189,7 @@ export default function NewInvoicePage() {
                 Client Name <span className="text-red-500">*</span>
               </label>
               <input
+                ref={clientNameRef}
                 type="text"
                 required
                 value={clientName}
@@ -97,6 +204,7 @@ export default function NewInvoicePage() {
                 Client Email <span className="text-red-500">*</span>
               </label>
               <input
+                ref={clientEmailRef}
                 type="email"
                 required
                 value={clientEmail}
@@ -130,6 +238,7 @@ export default function NewInvoicePage() {
                 Issue Date <span className="text-red-500">*</span>
               </label>
               <input
+                ref={issueDateRef}
                 type="date"
                 required
                 value={issueDate}
@@ -146,6 +255,7 @@ export default function NewInvoicePage() {
                 Due Date <span className="text-red-500">*</span>
               </label>
               <input
+                ref={dueDateRef}
                 type="date"
                 required
                 value={dueDate}
@@ -179,12 +289,11 @@ export default function NewInvoicePage() {
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Description
                     </label>
-                    <input
-                      type="text"
+                    <DescriptionInput
                       value={item.description}
-                      onChange={(e) => updateItem(item.id, 'description', e.target.value)}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      placeholder="Item description"
+                      onChange={(value) => updateItem(item.id, 'description', value)}
+                      dataItemId={item.id}
+                      commonDescriptions={commonDescriptions}
                     />
                   </div>
 
