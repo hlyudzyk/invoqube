@@ -162,14 +162,6 @@ export default function InvoiceDetailPage() {
           </div>
         </div>
 
-        {/* Notes */}
-        {invoice.notes && (
-          <div className="border-t border-gray-200 pt-6">
-            <h3 className="text-sm font-semibold text-gray-700 mb-2">Notes:</h3>
-            <p className="text-gray-600">{invoice.notes}</p>
-          </div>
-        )}
-
         {/* Footer */}
         <div className="border-t border-gray-200 pt-6 mt-8 text-center text-sm text-gray-500">
           <p>Thank you for your business!</p>

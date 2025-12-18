@@ -16,9 +16,7 @@ export const mockInvoices: Invoice[] = [
     items: [
       { id: '1', description: 'Web Development Services', quantity: 40, price: 50, total: 2000 },
       { id: '2', description: 'UI/UX Design Consultation', quantity: 5, price: 60, total: 300 }
-    ],
-    notes: 'Thank you for your business!'
-  },
+    ],  },
   {
     id: '2',
     invoiceNumber: 'INV-2024-002',
@@ -35,7 +33,6 @@ export const mockInvoices: Invoice[] = [
       { id: '1', description: 'Mobile App Development', quantity: 80, price: 60, total: 4800 },
       { id: '2', description: 'API Integration', quantity: 10, price: 50, total: 500 }
     ],
-    notes: 'Payment terms: Net 30'
   },
   {
     id: '3',
@@ -53,7 +50,6 @@ export const mockInvoices: Invoice[] = [
       { id: '1', description: 'System Maintenance', quantity: 20, price: 80, total: 1600 },
       { id: '2', description: 'Cloud Infrastructure Setup', quantity: 15, price: 100, total: 1500 }
     ],
-    notes: 'Overdue payment - please remit immediately'
   },
   {
     id: '4',
@@ -71,7 +67,6 @@ export const mockInvoices: Invoice[] = [
       { id: '1', description: 'Brand Identity Design', quantity: 1, price: 1500, total: 1500 },
       { id: '2', description: 'Logo Design Revisions', quantity: 2, price: 75, total: 150 }
     ],
-    notes: 'Draft - pending client approval'
   },
   {
     id: '5',
@@ -89,7 +84,6 @@ export const mockInvoices: Invoice[] = [
       { id: '1', description: 'Data Visualization Dashboard', quantity: 30, price: 100, total: 3000 },
       { id: '2', description: 'Analytics Integration', quantity: 15, price: 100, total: 1500 }
     ],
-    notes: 'Payment expected by due date'
   },
   {
     id: '6',
@@ -107,7 +101,6 @@ export const mockInvoices: Invoice[] = [
       { id: '1', description: 'E-commerce Platform Development', quantity: 100, price: 55, total: 5500 },
       { id: '2', description: 'Payment Gateway Integration', quantity: 1, price: 200, total: 200 }
     ],
-    notes: 'Paid in full - thank you!'
   },
   {
     id: '7',
@@ -125,7 +118,6 @@ export const mockInvoices: Invoice[] = [
       { id: '1', description: 'SEO Optimization', quantity: 20, price: 80, total: 1600 },
       { id: '2', description: 'Content Marketing Strategy', quantity: 10, price: 120, total: 1200 }
     ],
-    notes: 'Second reminder - payment overdue'
   },
   {
     id: '8',
@@ -143,7 +135,6 @@ export const mockInvoices: Invoice[] = [
       { id: '1', description: 'Blockchain Integration', quantity: 50, price: 120, total: 6000 },
       { id: '2', description: 'Smart Contract Development', quantity: 10, price: 90, total: 900 }
     ],
-    notes: 'Payment terms: Net 30 days'
   }
 ];
 
